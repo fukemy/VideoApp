@@ -7,6 +7,7 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.DragEvent;
@@ -62,9 +63,7 @@ public class AcVideoList extends YouTubeBaseActivity {
                 if(!b){
                     draggableView.bringToFront();
                     youtubePlayer = youTubePlayer;
-//                    youTubePlayer.loadVideo("15on8DquWgA");
-//                    youTubePlayer.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
-                    youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
+                    youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.MINIMAL);
                 }
             }
 
@@ -82,22 +81,30 @@ public class AcVideoList extends YouTubeBaseActivity {
         draggableView.setDraggableListener(new DraggableListener() {
             @Override
             public void onMaximized() {
-                if(youtubePlayer != null){
-                    youtubePlayer.loadVideo("15on8DquWgA");
-                }
+
                 draggableView.bringToFront();
                 listView.setVisibility(View.GONE);
                 videoView.bringToFront();
+                if(youtubePlayer != null){
+                    if(youtubePlayer.isPlaying()){
+                        Log.e("", "is playing");
+                        youtubePlayer.play();
+                    }else {
+                        Log.e("", "loadVideo");
+                        youtubePlayer.loadVideo("15on8DquWgA");
+                    }
+                }
             }
 
             @Override
             public void onMinimized() {
-                if(youtubePlayer != null){
-                    youtubePlayer.release();
-                }
                 draggableView.bringToFront();
-                listView.setVisibility(View.VISIBLE);
                 videoView.bringToFront();
+                videoView.bringChildToFront(draggableView);
+                listView.setVisibility(View.VISIBLE);
+                if(youtubePlayer != null){
+                    youtubePlayer.pause();
+                }
             }
 
             @Override
