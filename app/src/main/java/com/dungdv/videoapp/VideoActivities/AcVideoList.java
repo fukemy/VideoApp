@@ -225,9 +225,16 @@ public class AcVideoList extends YouTubeBaseActivity implements
         videoList = new ArrayList<>();
 
         videoData = new EnVideoData();
-        videoData.setVideoDescription("test 1");
-        videoData.setVideoName("Nguyen Van Cu");
-        videoData.setVideoUrl("srH-2pQdKhg");
+        videoData.setVideoDescription("Chưa cập nhập địa chỉ");
+        videoData.setVideoName("Đường Nguyễn Văn Cừ");
+        videoData.setVideoUrl("RskPgmc2ngg");
+        videoData.setVideoThumb(GlobalParams.THUMBS_VIDEO_SAMPLE);
+        videoList.add(videoData);
+
+        videoData = new EnVideoData();
+        videoData.setVideoDescription("Chưa cập nhập địa chỉ");
+        videoData.setVideoName("Đường Võ Thị Sáu");
+        videoData.setVideoUrl("8EkJnJyVPtA");
         videoData.setVideoThumb(GlobalParams.THUMBS_VIDEO_SAMPLE);
 
         videoList.add(videoData);

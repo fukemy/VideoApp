@@ -12,6 +12,10 @@ import android.widget.Toast;
 
 import com.dungdv.videoapp.Entities.EnVideoData;
 import com.dungdv.videoapp.R;
+import com.dungdv.videoapp.Utilities.GlobalParams;
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubeThumbnailLoader;
+import com.google.android.youtube.player.YouTubeThumbnailView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -33,12 +37,12 @@ public class VideoListAdapter extends BaseAdapter {
 
     private static class ViewHolder {
         private TextView videoName;
-        private ImageView thumb;
+        private YouTubeThumbnailView thumb;
         private ProgressBar prLoadImgThumb;
 
         public ViewHolder(View v) {
             videoName = (TextView) v.findViewById(R.id.videoName);
-            thumb = (ImageView) v.findViewById(R.id.videoThumb);
+            thumb = (YouTubeThumbnailView) v.findViewById(R.id.videoThumb);
             prLoadImgThumb = (ProgressBar) v.findViewById(R.id.prLoadImgThumb);
         }
     }
@@ -49,7 +53,7 @@ public class VideoListAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
         LayoutInflater inflater = LayoutInflater.from(mContext);
         // If holder not exist then locate all view from UI file.
@@ -67,17 +71,41 @@ public class VideoListAdapter extends BaseAdapter {
 
         holder.videoName.setText(getItem(position).getVideoName());
         final ProgressBar dialog = holder.prLoadImgThumb;
-        Picasso.with(mContext).load(getItem(position).getVideoThumb()).into(holder.thumb, new Callback() {
+        holder.thumb.initialize(GlobalParams.YOUTUBE_API_KEY, new YouTubeThumbnailView.OnInitializedListener() {
             @Override
-            public void onSuccess() {
+            public void onInitializationSuccess(YouTubeThumbnailView youTubeThumbnailView, final YouTubeThumbnailLoader youTubeThumbnailLoader) {
+                youTubeThumbnailLoader.setVideo(getItem(position).getVideoUrl());
+                youTubeThumbnailLoader.setOnThumbnailLoadedListener(new YouTubeThumbnailLoader.OnThumbnailLoadedListener() {
+                    @Override
+                    public void onThumbnailLoaded(YouTubeThumbnailView youTubeThumbnailView, String s) {
+                        youTubeThumbnailLoader.release();
+                        dialog.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onThumbnailError(YouTubeThumbnailView youTubeThumbnailView, YouTubeThumbnailLoader.ErrorReason errorReason) {
+                        dialog.setVisibility(View.GONE);
+                    }
+                });
+            }
+
+            @Override
+            public void onInitializationFailure(YouTubeThumbnailView youTubeThumbnailView, YouTubeInitializationResult youTubeInitializationResult) {
                 dialog.setVisibility(View.GONE);
             }
-
-            @Override
-            public void onError() {
-
-            }
         });
+
+//        Picasso.with(mContext).load(getItem(position).getVideoThumb()).into(holder.thumb, new Callback() {
+//            @Override
+//            public void onSuccess() {
+//                dialog.setVisibility(View.GONE);
+//            }
+//
+//            @Override
+//            public void onError() {
+//
+//            }
+//        });
 
         return convertView;
     }

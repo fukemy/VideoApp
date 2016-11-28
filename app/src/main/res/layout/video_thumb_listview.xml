@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="160dp">
 
-        <ImageView
+        <com.google.android.youtube.player.YouTubeThumbnailView
             android:id="@+id/videoThumb"
             android:layout_width="match_parent"
             android:layout_height="160dp"
