@@ -23,11 +23,15 @@ import com.dungdv.videoapp.R;
 import com.dungdv.videoapp.Utilities.GlobalParams;
 import com.github.pedrovgs.DraggableListener;
 import com.github.pedrovgs.DraggableView;
+import com.google.android.youtube.player.YouTubeBaseActivity;
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayer;
+import com.google.android.youtube.player.YouTubePlayerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AcVideoList extends Activity {
+public class AcVideoList extends YouTubeBaseActivity {
 
     List<EnVideoData> videoList;
     private ListView listView;
@@ -35,7 +39,7 @@ public class AcVideoList extends Activity {
     private VideoListAdapter adapter;
     private boolean isFirstTimeClick;
     private ListView lv;
-    private VideoView videoView;
+    private YouTubePlayerView videoView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +55,22 @@ public class AcVideoList extends Activity {
     private void initView(){
         listView = (ListView) findViewById(R.id.list_view);
         lv = (ListView) findViewById(R.id.ll);
-        videoView = (VideoView) findViewById(R.id.videoView);
+        videoView = (YouTubePlayerView) findViewById(R.id.videoView);
+        videoView.initialize(GlobalParams.YOUTUBE_API_KEY, new YouTubePlayer.OnInitializedListener() {
+            @Override
+            public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
+                if(!b){
+                    youTubePlayer.loadVideo("15on8DquWgA");
+                    youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
+                }
+            }
+
+            @Override
+            public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
+
+            }
+        });
+
         draggableView = (DraggableView) findViewById(R.id.draggable_view);
         draggableView.setVisibility(View.GONE);
         draggableView.setClickToMaximizeEnabled(true);
@@ -63,7 +82,6 @@ public class AcVideoList extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 EnVideoData videoData = (EnVideoData) parent.getAdapter().getItem(position);
-                videoView.setVideoURI(Uri.parse(videoData.getVideoUrl()));
                 Toast.makeText(AcVideoList.this, "click in pos: " + position, Toast.LENGTH_SHORT).show();
 
                 draggableView.setVisibility(View.VISIBLE);
@@ -107,22 +125,14 @@ public class AcVideoList extends Activity {
     EnVideoData videoData;
     private void populateData(){
         videoList = new ArrayList<>();
+
         videoData = new EnVideoData();
         videoData.setVideoDescription("test 1");
         videoData.setVideoName("Nguyen Van Cu");
         videoData.setVideoUrl("http://nvc42.ddns.net:81/viewer/main.html");
         videoData.setVideoThumb(GlobalParams.THUMBS_VIDEO_SAMPLE);
-        videoList.add(videoData);
-
-        videoData = new EnVideoData();
-        videoData.setVideoDescription("test 2");
-        videoData.setVideoName("Ho Chi Minh");
-        videoData.setVideoUrl("http://nvc42.ddns.net:81/viewer/main.html");
-        videoData.setVideoThumb(GlobalParams.THUMBS_VIDEO_SAMPLE);
-
 
         videoList.add(videoData);
-        Toast.makeText(this, "populateData: " + videoList.size(), Toast.LENGTH_SHORT).show();
         adapter = new VideoListAdapter(videoList, this);
         listView.setAdapter(adapter);
     }

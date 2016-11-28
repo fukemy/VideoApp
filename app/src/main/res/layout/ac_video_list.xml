@@ -35,7 +35,7 @@
             android:background="@color/colorPrimary"
             android:layout_height="match_parent" />
 
-        <VideoView
+        <com.google.android.youtube.player.YouTubePlayerView
             android:id="@+id/videoView"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

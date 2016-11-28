@@ -24,13 +24,13 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-
+    compile files('libs/YouTubeAndroidPlayerApi.jar')
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support:design:24.2.1'
     compile 'com.github.pedrovgs:draggablepanel:1.9'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha7'
     testCompile 'junit:junit:4.12'
     compile 'com.squareup.picasso:picasso:2.5.2'
-//    compile 'com.linsea:universalvideoview:1.1.0@aar'
-//    compile 'com.github.florent37:viewanimator:1.0.4'
+    compile 'com.linsea:universalvideoview:1.1.0@aar'
+    compile 'com.github.florent37:viewanimator:1.0.4'
 }
