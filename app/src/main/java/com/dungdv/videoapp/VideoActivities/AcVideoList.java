@@ -63,7 +63,7 @@ public class AcVideoList extends YouTubeBaseActivity {
                 if(!b){
                     draggableView.bringToFront();
                     youtubePlayer = youTubePlayer;
-                    youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.MINIMAL);
+                    youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
                 }
             }
 
@@ -78,7 +78,16 @@ public class AcVideoList extends YouTubeBaseActivity {
         draggableView.setClickToMaximizeEnabled(true);
         draggableView.setClickToMinimizeEnabled(false);
 
+        draggableView.setOnDragListener(new View.OnDragListener() {
+            @Override
+            public boolean onDrag(View view, DragEvent dragEvent) {
+                listView.setVisibility(View.VISIBLE);
+                return false;
+            }
+        });
+
         draggableView.setDraggableListener(new DraggableListener() {
+            int currentState;
             @Override
             public void onMaximized() {
 
@@ -86,23 +95,30 @@ public class AcVideoList extends YouTubeBaseActivity {
                 listView.setVisibility(View.GONE);
                 videoView.bringToFront();
                 if(youtubePlayer != null){
+
                     if(youtubePlayer.isPlaying()){
                         Log.e("", "is playing");
                         youtubePlayer.play();
                     }else {
                         Log.e("", "loadVideo");
-                        youtubePlayer.loadVideo("15on8DquWgA");
+                        youtubePlayer.loadVideo("UCcXkZhpzKuDhCoCYJ3rWmIg");
                     }
+                    if(currentState != 0){
+                        youtubePlayer.seekToMillis(currentState);
+                    }
+
                 }
             }
 
             @Override
             public void onMinimized() {
+                listView.setVisibility(View.VISIBLE);
                 draggableView.bringToFront();
                 videoView.bringToFront();
                 videoView.bringChildToFront(draggableView);
-                listView.setVisibility(View.VISIBLE);
                 if(youtubePlayer != null){
+                    currentState = youtubePlayer.getCurrentTimeMillis();
+                    Toast.makeText(AcVideoList.this, "currentState: " + currentState, Toast.LENGTH_SHORT).show();
                     youtubePlayer.pause();
                 }
             }
@@ -122,7 +138,6 @@ public class AcVideoList extends YouTubeBaseActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 EnVideoData videoData = (EnVideoData) parent.getAdapter().getItem(position);
-                Toast.makeText(AcVideoList.this, "click in pos: " + position, Toast.LENGTH_SHORT).show();
 
                 draggableView.setVisibility(View.VISIBLE);
                 if(isFirstTimeClick){
