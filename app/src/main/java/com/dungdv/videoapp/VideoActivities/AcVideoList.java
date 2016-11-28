@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -32,6 +33,8 @@ public class AcVideoList extends Activity {
     private ListView listView;
     private DraggableView draggableView;
     private VideoListAdapter adapter;
+    private boolean isFirstTimeClick;
+    private ListView lv;
     private VideoView videoView;
 
     @Override
@@ -39,52 +42,37 @@ public class AcVideoList extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ac_video_list);
 
+        isFirstTimeClick = true;
+
         initView();
         populateData();
     }
 
     private void initView(){
         listView = (ListView) findViewById(R.id.list_view);
+        lv = (ListView) findViewById(R.id.ll);
         videoView = (VideoView) findViewById(R.id.videoView);
         draggableView = (DraggableView) findViewById(R.id.draggable_view);
         draggableView.setVisibility(View.GONE);
         draggableView.setClickToMaximizeEnabled(true);
         draggableView.setClickToMinimizeEnabled(false);
 
-        draggableView.setDraggableListener(new DraggableListener() {
-            @Override
-            public void onMaximized() {
-                if(draggableView.getVisibility() == View.GONE)
-                    draggableView.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onMinimized() {
-
-            }
-
-            @Override
-            public void onClosedToLeft() {
-
-            }
-
-            @Override
-            public void onClosedToRight() {
-
-            }
-        });
+        draggableView.minimize();
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 EnVideoData videoData = (EnVideoData) parent.getAdapter().getItem(position);
+                videoView.setVideoURI(Uri.parse(videoData.getVideoUrl()));
                 Toast.makeText(AcVideoList.this, "click in pos: " + position, Toast.LENGTH_SHORT).show();
 
                 draggableView.setVisibility(View.VISIBLE);
+                if(isFirstTimeClick){
+                    isFirstTimeClick = false;
+                }
                 draggableView.maximize();
             }
         });
-
     }
 
     @Override
