@@ -1,6 +1,7 @@
 package com.dungdv.videoapp.VideoActivities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
@@ -22,6 +23,7 @@ import com.dungdv.videoapp.Adapters.VideoListAdapter;
 import com.dungdv.videoapp.Entities.EnVideoData;
 import com.dungdv.videoapp.R;
 import com.dungdv.videoapp.Utilities.GlobalParams;
+import com.dungdv.videoapp.Utilities.Logger;
 import com.github.pedrovgs.DraggableListener;
 import com.github.pedrovgs.DraggableView;
 import com.google.android.youtube.player.YouTubeBaseActivity;
@@ -32,8 +34,9 @@ import com.google.android.youtube.player.YouTubePlayerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AcVideoList extends YouTubeBaseActivity {
-
+public class AcVideoList extends YouTubeBaseActivity implements
+        YouTubePlayer.OnInitializedListener {
+    private static final int RECOVERY_DIALOG_REQUEST = 1234;
     List<EnVideoData> videoList;
     private ListView listView;
     private DraggableView draggableView;
@@ -42,6 +45,8 @@ public class AcVideoList extends YouTubeBaseActivity {
     private ListView lv;
     private YouTubePlayerView videoView;
     private YouTubePlayer youtubePlayer;
+    boolean isPlaying = false;
+    String VIDEO_ID = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,25 +58,13 @@ public class AcVideoList extends YouTubeBaseActivity {
         populateData();
     }
 
+    int currentState;
     private void initView(){
         listView = (ListView) findViewById(R.id.list_view);
         lv = (ListView) findViewById(R.id.ll);
         videoView = (YouTubePlayerView) findViewById(R.id.videoView);
-        videoView.initialize(GlobalParams.YOUTUBE_API_KEY, new YouTubePlayer.OnInitializedListener() {
-            @Override
-            public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
-                if(!b){
-                    draggableView.bringToFront();
-                    youtubePlayer = youTubePlayer;
-                    youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
-                }
-            }
 
-            @Override
-            public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
-
-            }
-        });
+        videoView.initialize(GlobalParams.YOUTUBE_API_KEY, this);
 
         draggableView = (DraggableView) findViewById(R.id.draggable_view);
         draggableView.setVisibility(View.GONE);
@@ -87,7 +80,6 @@ public class AcVideoList extends YouTubeBaseActivity {
         });
 
         draggableView.setDraggableListener(new DraggableListener() {
-            int currentState;
             @Override
             public void onMaximized() {
 
@@ -96,12 +88,13 @@ public class AcVideoList extends YouTubeBaseActivity {
                 videoView.bringToFront();
                 if(youtubePlayer != null){
 
-                    if(youtubePlayer.isPlaying()){
-                        Log.e("", "is playing");
+                    if(youtubePlayer.isPlaying() || isPlaying == true){
+                        Logger.error("is playing");
                         youtubePlayer.play();
                     }else {
-                        Log.e("", "loadVideo");
-                        youtubePlayer.loadVideo("UCcXkZhpzKuDhCoCYJ3rWmIg");
+                        Logger.error("loadVideo");
+                        isPlaying = false;
+                        youtubePlayer.loadVideo(VIDEO_ID);
                     }
                     if(currentState != 0){
                         youtubePlayer.seekToMillis(currentState);
@@ -118,7 +111,7 @@ public class AcVideoList extends YouTubeBaseActivity {
                 videoView.bringChildToFront(draggableView);
                 if(youtubePlayer != null){
                     currentState = youtubePlayer.getCurrentTimeMillis();
-                    Toast.makeText(AcVideoList.this, "currentState: " + currentState, Toast.LENGTH_SHORT).show();
+                    Logger.error("pause video in state: " + currentState);
                     youtubePlayer.pause();
                 }
             }
@@ -138,14 +131,66 @@ public class AcVideoList extends YouTubeBaseActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 EnVideoData videoData = (EnVideoData) parent.getAdapter().getItem(position);
-
+                VIDEO_ID = videoData.getVideoUrl();
                 draggableView.setVisibility(View.VISIBLE);
                 if(isFirstTimeClick){
                     isFirstTimeClick = false;
                 }
+                isPlaying = false;
                 draggableView.maximize();
             }
         });
+    }
+
+    @Override
+    public void onInitializationFailure(YouTubePlayer.Provider provider,
+                                        YouTubeInitializationResult errorReason) {
+        if (errorReason.isUserRecoverableError()) {
+            errorReason.getErrorDialog(this, RECOVERY_DIALOG_REQUEST).show();
+        } else {
+            String errorMessage = String.format("YouTube Error (%1$s)",
+                    errorReason.toString());
+            Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    @Override
+    public void onInitializationSuccess(YouTubePlayer.Provider provider,
+                                        YouTubePlayer player, boolean wasRestored) {
+        if (!wasRestored) {
+            draggableView.bringToFront();
+            youtubePlayer = player;
+            youtubePlayer.setPlaybackEventListener(new YouTubePlayer.PlaybackEventListener() {
+                @Override
+                public void onPlaying() {
+                    Logger.error("on Playing");
+                }
+
+                @Override
+                public void onPaused() {
+                    Logger.error("on paused");
+                    isPlaying = true;
+                }
+
+                @Override
+                public void onStopped() {
+                    isPlaying = false;
+                }
+
+                @Override
+                public void onBuffering(boolean b) {
+
+                }
+
+                @Override
+                public void onSeekTo(int i) {
+
+                }
+            });
+            youtubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
+        }
+
     }
 
     @Override
@@ -171,8 +216,6 @@ public class AcVideoList extends YouTubeBaseActivity {
                     TypedValue.COMPLEX_UNIT_DIP, 200, r.getDisplayMetrics()
             );
             draggableView.setTopViewHeight(px);
-
-
         }
     }
 
@@ -184,7 +227,7 @@ public class AcVideoList extends YouTubeBaseActivity {
         videoData = new EnVideoData();
         videoData.setVideoDescription("test 1");
         videoData.setVideoName("Nguyen Van Cu");
-        videoData.setVideoUrl("http://nvc42.ddns.net:81/viewer/main.html");
+        videoData.setVideoUrl("srH-2pQdKhg");
         videoData.setVideoThumb(GlobalParams.THUMBS_VIDEO_SAMPLE);
 
         videoList.add(videoData);
@@ -192,5 +235,10 @@ public class AcVideoList extends YouTubeBaseActivity {
         listView.setAdapter(adapter);
     }
 
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == RECOVERY_DIALOG_REQUEST){
+            videoView.initialize(GlobalParams.YOUTUBE_API_KEY, this);
+        }
+    }
 }

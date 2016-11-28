@@ -6,11 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dungdv.videoapp.Entities.EnVideoData;
 import com.dungdv.videoapp.R;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -32,10 +34,12 @@ public class VideoListAdapter extends BaseAdapter {
     private static class ViewHolder {
         private TextView videoName;
         private ImageView thumb;
+        private ProgressBar prLoadImgThumb;
 
         public ViewHolder(View v) {
             videoName = (TextView) v.findViewById(R.id.videoName);
             thumb = (ImageView) v.findViewById(R.id.videoThumb);
+            prLoadImgThumb = (ProgressBar) v.findViewById(R.id.prLoadImgThumb);
         }
     }
 
@@ -62,7 +66,18 @@ public class VideoListAdapter extends BaseAdapter {
         }
 
         holder.videoName.setText(getItem(position).getVideoName());
-        Picasso.with(mContext).load(getItem(position).getVideoThumb()).into(holder.thumb);
+        final ProgressBar dialog = holder.prLoadImgThumb;
+        Picasso.with(mContext).load(getItem(position).getVideoThumb()).into(holder.thumb, new Callback() {
+            @Override
+            public void onSuccess() {
+                dialog.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
 
         return convertView;
     }

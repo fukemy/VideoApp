@@ -13,7 +13,15 @@
 
         <activity
             android:name="com.dungdv.videoapp.VideoActivities.AcVideoList"
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+            android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden|screenSize">
+        </activity>
+
+        <activity
+            android:name="com.dungdv.videoapp.SpashScreen.SprashScreen"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

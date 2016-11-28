@@ -10,6 +10,8 @@
     <ListView
         android:id="@+id/list_view"
         android:layout_width="match_parent"
+        android:padding="20dp"
+        android:layout_marginTop="20dp"
         android:layout_height="match_parent" />
 
     <com.github.pedrovgs.DraggableView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -20,7 +22,7 @@
         android:background="@color/black"
         draggable_view:bottom_view_id="@+id/ll"
         draggable_view:enable_minimized_horizontal_alpha_effect="true"
-        draggable_view:top_view_height="210dp"
+        draggable_view:top_view_height="200dp"
         draggable_view:top_view_id="@+id/videoView"
         draggable_view:top_view_margin_bottom="5dp"
         draggable_view:top_view_resize="true"
@@ -38,7 +40,7 @@
         <com.google.android.youtube.player.YouTubePlayerView
             android:id="@+id/videoView"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:background="@color/black" />
     </com.github.pedrovgs.DraggableView>
 </FrameLayout>
