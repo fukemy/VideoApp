@@ -40,7 +40,7 @@ public class AcVideoList extends YouTubeBaseActivity {
     private boolean isFirstTimeClick;
     private ListView lv;
     private YouTubePlayerView videoView;
-
+    private YouTubePlayer youtubePlayer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +60,10 @@ public class AcVideoList extends YouTubeBaseActivity {
             @Override
             public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
                 if(!b){
-                    youTubePlayer.loadVideo("15on8DquWgA");
+                    draggableView.bringToFront();
+                    youtubePlayer = youTubePlayer;
+//                    youTubePlayer.loadVideo("15on8DquWgA");
+//                    youTubePlayer.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
                     youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
                 }
             }
@@ -76,7 +79,37 @@ public class AcVideoList extends YouTubeBaseActivity {
         draggableView.setClickToMaximizeEnabled(true);
         draggableView.setClickToMinimizeEnabled(false);
 
-        draggableView.minimize();
+        draggableView.setDraggableListener(new DraggableListener() {
+            @Override
+            public void onMaximized() {
+                if(youtubePlayer != null){
+                    youtubePlayer.loadVideo("15on8DquWgA");
+                }
+                draggableView.bringToFront();
+                listView.setVisibility(View.GONE);
+                videoView.bringToFront();
+            }
+
+            @Override
+            public void onMinimized() {
+                if(youtubePlayer != null){
+                    youtubePlayer.release();
+                }
+                draggableView.bringToFront();
+                listView.setVisibility(View.VISIBLE);
+                videoView.bringToFront();
+            }
+
+            @Override
+            public void onClosedToLeft() {
+
+            }
+
+            @Override
+            public void onClosedToRight() {
+
+            }
+        });
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
