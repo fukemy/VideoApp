@@ -1,8 +1,13 @@
 package com.dungdv.videoapp.VideoActivities;
 
 import android.app.Activity;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.TypedValue;
+import android.view.Display;
 import android.view.DragEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -81,6 +86,35 @@ public class AcVideoList extends Activity {
         });
 
     }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Display display = AcVideoList.this.getWindowManager()
+                            .getDefaultDisplay();
+
+            Point size = new Point();
+            display.getSize(size);
+            draggableView.setTopViewHeight(size.y);
+
+            Toast.makeText(AcVideoList.this, "landscape", Toast.LENGTH_SHORT)
+                    .show();
+        } else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            Toast.makeText(AcVideoList.this, "portraite", Toast.LENGTH_SHORT)
+                    .show();
+
+            Resources r = getResources();
+            int px = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, 200, r.getDisplayMetrics()
+            );
+            draggableView.setTopViewHeight(px);
+
+
+        }
+    }
+
 
     EnVideoData videoData;
     private void populateData(){
