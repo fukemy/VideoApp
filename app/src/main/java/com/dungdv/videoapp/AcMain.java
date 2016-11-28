@@ -45,9 +45,9 @@ public class AcMain extends AppCompatActivity {
             public void onPageFinished(WebView view, String url)
             {
                 Toast.makeText(AcMain.this, "Load camera success!", Toast.LENGTH_SHORT).show();
-                webview.loadUrl("javascript:(function() { " +
-                        "document.getElementsByTagName('screen').getElementsByTagName('img'); " +
-                        "})()");
+//                webview.loadUrl("javascript:(function() { " +
+//                        "document.getElementsByTagName('screen').getElementsByTagName('img'); " +
+//                        "})()");
             }
         });
         webview.loadUrl("http://nvc42.ddns.net:81/viewer/main.html");
