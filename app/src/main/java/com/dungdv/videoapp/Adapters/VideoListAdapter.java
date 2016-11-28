@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dungdv.videoapp.Entities.EnVideoData;
+import com.dungdv.videoapp.Helper.YoutubeHelper;
 import com.dungdv.videoapp.R;
 import com.dungdv.videoapp.Utilities.GlobalParams;
 import com.google.android.youtube.player.YouTubeInitializationResult;
@@ -95,18 +96,7 @@ public class VideoListAdapter extends BaseAdapter {
             }
         });
 
-//        Picasso.with(mContext).load(getItem(position).getVideoThumb()).into(holder.thumb, new Callback() {
-//            @Override
-//            public void onSuccess() {
-//                dialog.setVisibility(View.GONE);
-//            }
-//
-//            @Override
-//            public void onError() {
-//
-//            }
-//        });
-
+//        YoutubeHelper.getTitleQuietly(getItem(position).getVideoUrl());
         return convertView;
     }
 

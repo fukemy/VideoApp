@@ -34,7 +34,7 @@
             android:id="@+id/ll"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:background="@color/uvv_gray" />
+            android:background="@color/background" />
 
 
         <com.google.android.youtube.player.YouTubePlayerView
