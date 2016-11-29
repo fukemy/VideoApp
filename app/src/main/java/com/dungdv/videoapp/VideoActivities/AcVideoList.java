@@ -14,6 +14,7 @@ import android.view.Display;
 import android.view.DragEvent;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -52,6 +53,7 @@ public class AcVideoList extends YouTubeBaseActivity implements
     private YouTubePlayerView videoView;
     private YouTubePlayer youtubePlayer;
     private TextView tvTitle, tvProvider, tvAuthor;
+    private FrameLayout frmListVideoContainer;
     String VIDEO_ID = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,7 @@ public class AcVideoList extends YouTubeBaseActivity implements
 
     int currentState;
     private void initView(){
+        frmListVideoContainer = (FrameLayout) findViewById(R.id.frmListVideoContainer);
         listView = (ListView) findViewById(R.id.list_view);
         ll = (LinearLayout) findViewById(R.id.ll);
         tvTitle = (TextView) findViewById(R.id.tvTitle);
@@ -92,9 +95,9 @@ public class AcVideoList extends YouTubeBaseActivity implements
             @Override
             public void onMaximized() {
 
-                draggableView.bringToFront();
-                listView.setVisibility(View.GONE);
-                videoView.bringToFront();
+//                draggableView.bringToFront();
+//                listView.setVisibility(View.GONE);
+//                videoView.bringToFront();
                 if(youtubePlayer != null){
 
 //                    if(youtubePlayer.isPlaying() || isPlaying == true){
@@ -113,10 +116,10 @@ public class AcVideoList extends YouTubeBaseActivity implements
 
             @Override
             public void onMinimized() {
-                listView.setVisibility(View.VISIBLE);
-                draggableView.bringToFront();
-                videoView.bringToFront();
-                videoView.bringChildToFront(draggableView);
+//                listView.setVisibility(View.VISIBLE);
+//                draggableView.bringToFront();
+//                videoView.bringToFront();
+//                videoView.bringChildToFront(draggableView);
                 if(youtubePlayer != null){
 //                    currentState = youtubePlayer.getCurrentTimeMillis();
                     Logger.error("pause video in state: " + currentState);
@@ -145,6 +148,9 @@ public class AcVideoList extends YouTubeBaseActivity implements
                     isFirstTimeClick = false;
                 }
 
+                tvTitle.setText("");
+                tvAuthor.setText("");
+                tvProvider.setText("");
                 YoutubeHelper.getTitleQuietly(AcVideoList.this, VIDEO_ID, tvTitle, tvAuthor, tvProvider);
 
                 draggableView.maximize();
@@ -171,8 +177,10 @@ public class AcVideoList extends YouTubeBaseActivity implements
         if (!wasRestored) {
             draggableView.bringToFront();
             youtubePlayer = player;
-            youtubePlayer.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
             youtubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
+            youtubePlayer.setShowFullscreenButton(true);
+            youtubePlayer.setFullscreen(false);
+//            youtubePlayer.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_SYSTEM_UI);
         }
 
     }
