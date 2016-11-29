@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 
+import com.dungdv.videoapp.R;
 import com.dungdv.videoapp.VideoActivities.AcVideoList;
 
 /**
@@ -17,7 +18,7 @@ public class SprashScreen extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setContentView(R.layout.ac_sprash_screen);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

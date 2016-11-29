@@ -15,12 +15,16 @@ import android.view.DragEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.dungdv.videoapp.Adapters.VideoListAdapter;
 import com.dungdv.videoapp.Entities.EnVideoData;
+import com.dungdv.videoapp.Entities.EnYoutubeInformationData;
+import com.dungdv.videoapp.Helper.YoutubeHelper;
 import com.dungdv.videoapp.R;
 import com.dungdv.videoapp.Utilities.GlobalParams;
 import com.dungdv.videoapp.Utilities.Logger;
@@ -30,6 +34,8 @@ import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,10 +48,10 @@ public class AcVideoList extends YouTubeBaseActivity implements
     private DraggableView draggableView;
     private VideoListAdapter adapter;
     private boolean isFirstTimeClick;
-    private ListView lv;
+    private LinearLayout ll;
     private YouTubePlayerView videoView;
     private YouTubePlayer youtubePlayer;
-    boolean isPlaying = false;
+    private TextView tvTitle, tvProvider, tvAuthor;
     String VIDEO_ID = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +67,10 @@ public class AcVideoList extends YouTubeBaseActivity implements
     int currentState;
     private void initView(){
         listView = (ListView) findViewById(R.id.list_view);
-        lv = (ListView) findViewById(R.id.ll);
+        ll = (LinearLayout) findViewById(R.id.ll);
+        tvTitle = (TextView) findViewById(R.id.tvTitle);
+        tvProvider = (TextView) findViewById(R.id.tvProvider);
+        tvAuthor = (TextView) findViewById(R.id.tvAuthor);
         videoView = (YouTubePlayerView) findViewById(R.id.videoView);
 
         videoView.initialize(GlobalParams.YOUTUBE_API_KEY, this);
@@ -88,17 +97,16 @@ public class AcVideoList extends YouTubeBaseActivity implements
                 videoView.bringToFront();
                 if(youtubePlayer != null){
 
-                    if(youtubePlayer.isPlaying() || isPlaying == true){
-                        Logger.error("is playing");
-                        youtubePlayer.play();
-                    }else {
-                        Logger.error("loadVideo");
-                        isPlaying = false;
+//                    if(youtubePlayer.isPlaying() || isPlaying == true){
+//                        Logger.error("is playing");
+//                        youtubePlayer.play();
+//                    }else {
+//                        Logger.error("loadVideo");
                         youtubePlayer.loadVideo(VIDEO_ID);
-                    }
-                    if(currentState != 0){
-                        youtubePlayer.seekToMillis(currentState);
-                    }
+//                    }
+//                    if(currentState != 0){
+//                        youtubePlayer.seekToMillis(currentState);
+//                    }
 
                 }
             }
@@ -110,7 +118,7 @@ public class AcVideoList extends YouTubeBaseActivity implements
                 videoView.bringToFront();
                 videoView.bringChildToFront(draggableView);
                 if(youtubePlayer != null){
-                    currentState = youtubePlayer.getCurrentTimeMillis();
+//                    currentState = youtubePlayer.getCurrentTimeMillis();
                     Logger.error("pause video in state: " + currentState);
                     youtubePlayer.pause();
                 }
@@ -136,7 +144,17 @@ public class AcVideoList extends YouTubeBaseActivity implements
                 if(isFirstTimeClick){
                     isFirstTimeClick = false;
                 }
-                isPlaying = false;
+
+                EnYoutubeInformationData infor = YoutubeHelper.getTitleQuietly(VIDEO_ID);
+                if(infor != null){
+                    tvTitle.setText(infor.getTitle());
+                    tvProvider.setText(infor.getProvider());
+                    tvAuthor.setText(infor.getAuthor());
+                }else{
+                    tvProvider.setText(getResources().getString(R.string.youtube_error_get_video_information));
+                    tvTitle.setText("");
+                    tvAuthor.setText("");
+                }
                 draggableView.maximize();
             }
         });
@@ -161,34 +179,7 @@ public class AcVideoList extends YouTubeBaseActivity implements
         if (!wasRestored) {
             draggableView.bringToFront();
             youtubePlayer = player;
-            youtubePlayer.setPlaybackEventListener(new YouTubePlayer.PlaybackEventListener() {
-                @Override
-                public void onPlaying() {
-                    Logger.error("on Playing");
-                }
-
-                @Override
-                public void onPaused() {
-                    Logger.error("on paused");
-                    isPlaying = true;
-                }
-
-                @Override
-                public void onStopped() {
-                    isPlaying = false;
-                }
-
-                @Override
-                public void onBuffering(boolean b) {
-
-                }
-
-                @Override
-                public void onSeekTo(int i) {
-
-                }
-            });
-            youtubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
+            youtubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
         }
 
     }
@@ -205,11 +196,7 @@ public class AcVideoList extends YouTubeBaseActivity implements
             display.getSize(size);
             draggableView.setTopViewHeight(size.y);
 
-            Toast.makeText(AcVideoList.this, "landscape", Toast.LENGTH_SHORT)
-                    .show();
         } else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            Toast.makeText(AcVideoList.this, "portraite", Toast.LENGTH_SHORT)
-                    .show();
 
             Resources r = getResources();
             int px = (int) TypedValue.applyDimension(

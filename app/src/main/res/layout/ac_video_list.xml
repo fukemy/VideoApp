@@ -10,9 +10,9 @@
     <ListView
         android:id="@+id/list_view"
         android:layout_width="match_parent"
-        android:padding="20dp"
+        android:layout_height="match_parent"
         android:layout_marginTop="20dp"
-        android:layout_height="match_parent" />
+        android:padding="20dp" />
 
     <com.github.pedrovgs.DraggableView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:draggable_view="http://schemas.android.com/apk/res-auto"
@@ -30,17 +30,43 @@
         draggable_view:top_view_y_scale_factor="2.3">
 
 
-        <ListView
+        <LinearLayout
             android:id="@+id/ll"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/background" />
+            android:layout_height="fill_parent"
+            android:background="@color/background"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left|center_horizontal"
+                android:padding="10dp"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvAuthor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left|center_horizontal"
+                android:padding="10dp" />
+
+            <TextView
+                android:id="@+id/tvProvider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left|center_horizontal"
+                android:padding="10dp" />
+        </LinearLayout>
 
 
         <com.google.android.youtube.player.YouTubePlayerView
             android:id="@+id/videoView"
             android:layout_width="fill_parent"
-            android:layout_height="match_parent"
+            android:layout_height="fill_parent"
             android:background="@color/black" />
     </com.github.pedrovgs.DraggableView>
 </FrameLayout>

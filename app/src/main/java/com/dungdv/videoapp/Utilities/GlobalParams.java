@@ -9,4 +9,7 @@ public class GlobalParams {
     public static final String YOUTUBE_API_KEY = "AIzaSyCbee2MxY3noVIKenWbHyLOobYplT9xNRo";
     public static final String YOUTUBE_VIDEO_ID = "VIDEO_ID";
     public static final String YOUTUBE_THUMB_OF_VIDEO = "https://img.youtube.com/vi/" + YOUTUBE_VIDEO_ID + "/default.jpg";
+    public static final String YOUTUBE_AUTHOR = "author_name";
+    public static final String YOUTUBE_PROVIDER = "provider_name";
+    public static final String YOUTUBE_TITLE = "title";
 }

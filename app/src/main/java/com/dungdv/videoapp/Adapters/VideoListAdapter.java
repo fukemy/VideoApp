@@ -40,11 +40,13 @@ public class VideoListAdapter extends BaseAdapter {
         private TextView videoName;
         private YouTubeThumbnailView thumb;
         private ProgressBar prLoadImgThumb;
+        private ImageView iconYoutube;
 
         public ViewHolder(View v) {
             videoName = (TextView) v.findViewById(R.id.videoName);
             thumb = (YouTubeThumbnailView) v.findViewById(R.id.videoThumb);
             prLoadImgThumb = (ProgressBar) v.findViewById(R.id.prLoadImgThumb);
+            iconYoutube = (ImageView) v.findViewById(R.id.iconYoutube);
         }
     }
 
@@ -72,6 +74,7 @@ public class VideoListAdapter extends BaseAdapter {
 
         holder.videoName.setText(getItem(position).getVideoName());
         final ProgressBar dialog = holder.prLoadImgThumb;
+        final ImageView youtube = holder.iconYoutube;
         holder.thumb.initialize(GlobalParams.YOUTUBE_API_KEY, new YouTubeThumbnailView.OnInitializedListener() {
             @Override
             public void onInitializationSuccess(YouTubeThumbnailView youTubeThumbnailView, final YouTubeThumbnailLoader youTubeThumbnailLoader) {
@@ -81,11 +84,13 @@ public class VideoListAdapter extends BaseAdapter {
                     public void onThumbnailLoaded(YouTubeThumbnailView youTubeThumbnailView, String s) {
                         youTubeThumbnailLoader.release();
                         dialog.setVisibility(View.GONE);
+                        youtube.setVisibility(View.VISIBLE);
                     }
 
                     @Override
                     public void onThumbnailError(YouTubeThumbnailView youTubeThumbnailView, YouTubeThumbnailLoader.ErrorReason errorReason) {
                         dialog.setVisibility(View.GONE);
+                        youtube.setVisibility(View.VISIBLE);
                     }
                 });
             }
@@ -93,9 +98,9 @@ public class VideoListAdapter extends BaseAdapter {
             @Override
             public void onInitializationFailure(YouTubeThumbnailView youTubeThumbnailView, YouTubeInitializationResult youTubeInitializationResult) {
                 dialog.setVisibility(View.GONE);
+                youtube.setVisibility(View.VISIBLE);
             }
         });
-
 //        YoutubeHelper.getTitleQuietly(getItem(position).getVideoUrl());
         return convertView;
     }
