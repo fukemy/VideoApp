@@ -6,6 +6,8 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.net.Uri;
+import android.os.Handler;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -54,6 +56,7 @@ public class AcVideoList extends YouTubeBaseActivity implements
     private YouTubePlayer youtubePlayer;
     private TextView tvTitle, tvProvider, tvAuthor;
     private LinearLayout frmListVideoContainer;
+    private SwipeRefreshLayout swipeLayout;
     boolean isShowingFullscreen;
     String VIDEO_ID = "";
     @Override
@@ -70,6 +73,7 @@ public class AcVideoList extends YouTubeBaseActivity implements
     int currentState;
     private void initView(){
         frmListVideoContainer = (LinearLayout) findViewById(R.id.frmListVideoContainer);
+        swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
         listView = (ListView) findViewById(R.id.list_view);
         ll = (LinearLayout) findViewById(R.id.ll);
         tvTitle = (TextView) findViewById(R.id.tvTitle);
@@ -134,6 +138,24 @@ public class AcVideoList extends YouTubeBaseActivity implements
                 YoutubeHelper.getTitleQuietly(AcVideoList.this, VIDEO_ID, tvTitle, tvAuthor, tvProvider);
 
                 draggableView.maximize();
+            }
+        });
+
+        swipeLayout.setColorScheme(new int[]{android.R.color.holo_blue_dark,
+                android.R.color.holo_blue_light,
+                android.R.color.holo_green_light,
+                android.R.color.holo_green_light});
+        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeLayout.setRefreshing(true);
+                (new Handler()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeLayout.setRefreshing(false);
+                        populateData();
+                    }
+                }, 1000);
             }
         });
     }

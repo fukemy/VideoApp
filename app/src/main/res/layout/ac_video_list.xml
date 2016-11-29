@@ -17,20 +17,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/green"
-            android:text="@string/app_title"
-            android:textColor="@android:color/white"
-            android:padding="12dp"
-            android:textSize="24dp"
             android:gravity="center"
+            android:padding="12dp"
+            android:text="@string/app_title"
             android:textAllCaps="true"
+            android:textColor="@android:color/white"
+            android:textSize="24dp"
             android:textStyle="bold" />
 
-        <ListView
-            android:id="@+id/list_view"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipeLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="20dp"
-            android:layout_marginTop="20dp" />
+            android:layout_marginTop="20dp">
+
+            <ListView
+                android:id="@+id/list_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </android.support.v4.widget.SwipeRefreshLayout>
 
     </LinearLayout>
 
