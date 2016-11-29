@@ -36,7 +36,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/frTop"
-        android:layout_margin="10dp"
+        android:layout_margin="4dp"
         android:ellipsize="end"
         android:gravity="left|center_horizontal"
         android:padding="10dp"
