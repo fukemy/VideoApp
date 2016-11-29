@@ -172,7 +172,7 @@ public class AcVideoList extends YouTubeBaseActivity implements
             draggableView.bringToFront();
             youtubePlayer = player;
             youtubePlayer.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
-            youtubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.MINIMAL);
+            youtubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
         }
 
     }
