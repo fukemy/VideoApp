@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Tuần đường</string>
+    <string name="app_name">Camera tuần đường</string>
     <string name="youtube_error_get_video_information"> Không thể lấy thông tin của video!</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"

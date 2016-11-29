@@ -145,16 +145,8 @@ public class AcVideoList extends YouTubeBaseActivity implements
                     isFirstTimeClick = false;
                 }
 
-                EnYoutubeInformationData infor = YoutubeHelper.getTitleQuietly(VIDEO_ID);
-                if(infor != null){
-                    tvTitle.setText(infor.getTitle());
-                    tvProvider.setText(infor.getProvider());
-                    tvAuthor.setText(infor.getAuthor());
-                }else{
-                    tvProvider.setText(getResources().getString(R.string.youtube_error_get_video_information));
-                    tvTitle.setText("");
-                    tvAuthor.setText("");
-                }
+                YoutubeHelper.getTitleQuietly(AcVideoList.this, VIDEO_ID, tvTitle, tvAuthor, tvProvider);
+
                 draggableView.maximize();
             }
         });
@@ -179,7 +171,8 @@ public class AcVideoList extends YouTubeBaseActivity implements
         if (!wasRestored) {
             draggableView.bringToFront();
             youtubePlayer = player;
-            youtubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
+            youtubePlayer.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
+            youtubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.MINIMAL);
         }
 
     }

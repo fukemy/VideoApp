@@ -82,7 +82,9 @@ public class VideoListAdapter extends BaseAdapter {
                 youTubeThumbnailLoader.setOnThumbnailLoadedListener(new YouTubeThumbnailLoader.OnThumbnailLoadedListener() {
                     @Override
                     public void onThumbnailLoaded(YouTubeThumbnailView youTubeThumbnailView, String s) {
-                        youTubeThumbnailLoader.release();
+                        try {
+                            youTubeThumbnailLoader.release();
+                        }catch (Exception e){}
                         dialog.setVisibility(View.GONE);
                         youtube.setVisibility(View.VISIBLE);
                     }
