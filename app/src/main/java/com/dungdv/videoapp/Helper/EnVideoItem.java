@@ -9,6 +9,9 @@ public class EnVideoItem {
     private String description;
     private String thumbnailURL;
     private String id;
+    private String kind;
+    private String snippet;
+
 
     @Override
     public String toString() {
@@ -17,7 +20,25 @@ public class EnVideoItem {
                 ", description='" + description + '\'' +
                 ", thumbnailURL='" + thumbnailURL + '\'' +
                 ", id='" + id + '\'' +
+                ", kind='" + kind + '\'' +
+                ", snippet='" + snippet + '\'' +
                 '}';
+    }
+
+    public String getSnippet() {
+        return snippet;
+    }
+
+    public void setSnippet(String snippet) {
+        this.snippet = snippet;
+    }
+
+    public String getKind() {
+        return kind;
+    }
+
+    public void setKind(String kind) {
+        this.kind = kind;
     }
 
     public String getId() {

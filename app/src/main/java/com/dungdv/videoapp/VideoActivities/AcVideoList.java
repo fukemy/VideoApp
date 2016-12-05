@@ -1,58 +1,38 @@
 package com.dungdv.videoapp.VideoActivities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.Point;
-import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
-import android.view.DragEvent;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.dungdv.videoapp.Adapters.VideoListAdapter;
-import com.dungdv.videoapp.Entities.EnVideoData;
-import com.dungdv.videoapp.Entities.EnYoutubeInformationData;
 import com.dungdv.videoapp.Helper.EnVideoItem;
 import com.dungdv.videoapp.Helper.YoutubeConnecter;
-import com.dungdv.videoapp.Helper.YoutubeHelper;
 import com.dungdv.videoapp.R;
 import com.dungdv.videoapp.Utilities.GlobalParams;
-import com.dungdv.videoapp.Utilities.Logger;
-import com.github.florent37.viewanimator.AnimationListener;
-import com.github.florent37.viewanimator.ViewAnimator;
 import com.github.pedrovgs.DraggableListener;
 import com.github.pedrovgs.DraggableView;
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
-import com.meetic.marypopup.MaryPopup;
 
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class AcVideoList extends YouTubeBaseActivity implements
         YouTubePlayer.OnInitializedListener {
     private static final int RECOVERY_DIALOG_REQUEST = 1234;
-    List<EnVideoData> videoList;
     private ListView listView;
     private DraggableView draggableView;
     private VideoListAdapter adapter;
@@ -220,8 +200,6 @@ public class AcVideoList extends YouTubeBaseActivity implements
         }
     }
 
-
-    EnVideoData videoData;
     private void populateData(){
 
         YoutubeConnecter yc = new YoutubeConnecter(this);

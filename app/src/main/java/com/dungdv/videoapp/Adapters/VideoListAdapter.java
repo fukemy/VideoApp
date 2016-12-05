@@ -8,15 +8,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.dungdv.videoapp.Entities.EnVideoData;
 import com.dungdv.videoapp.Helper.EnVideoItem;
-import com.dungdv.videoapp.Helper.YoutubeHelper;
 import com.dungdv.videoapp.R;
-import com.dungdv.videoapp.Utilities.GlobalParams;
-import com.google.android.youtube.player.YouTubeInitializationResult;
-import com.google.android.youtube.player.YouTubeThumbnailLoader;
 import com.google.android.youtube.player.YouTubeThumbnailView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -86,9 +80,6 @@ public class VideoListAdapter extends BaseAdapter {
                     }
                 });
 
-//        final ProgressBar dialog = holder.prLoadImgThumb;
-//        final ImageView youtube = holder.iconYoutube;
-//        final ImageView thumb = holder.thumb;
 //        holder.thumb.initialize(GlobalParams.YOUTUBE_API_KEY, new YouTubeThumbnailView.OnInitializedListener() {
 //            @Override
 //            public void onInitializationSuccess(YouTubeThumbnailView youTubeThumbnailView, final YouTubeThumbnailLoader youTubeThumbnailLoader) {
@@ -117,7 +108,6 @@ public class VideoListAdapter extends BaseAdapter {
 //                youtube.setVisibility(View.VISIBLE);
 //            }
 //        });
-//        YoutubeHelper.getTitleQuietly(getItem(position).getVideoUrl());
         return convertView;
     }
 

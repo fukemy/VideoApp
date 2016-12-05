@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.widget.TextView;
 
-import com.dungdv.videoapp.Entities.EnYoutubeInformationData;
 import com.dungdv.videoapp.R;
 import com.dungdv.videoapp.Utilities.GlobalParams;
 import com.dungdv.videoapp.Utilities.Logger;

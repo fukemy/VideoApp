@@ -61,8 +61,9 @@ public class YoutubeConnecter {
                 EnVideoItem item = new EnVideoItem();
                 item.setTitle(result.getSnippet().getTitle());
                 item.setDescription(result.getSnippet().getDescription());
-                item.setThumbnailURL(result.getSnippet().getThumbnails().getDefault().getUrl());
+                item.setThumbnailURL(result.getSnippet().getThumbnails().getHigh().getUrl());
                 item.setId(result.getId().getVideoId());
+                item.setKind(result.getKind());
                 items.add(item);
 
                 Logger.error("found video: " + item.toString());
