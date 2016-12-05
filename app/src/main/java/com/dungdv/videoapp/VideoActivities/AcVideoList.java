@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.dungdv.videoapp.Adapters.VideoListAdapter;
 import com.dungdv.videoapp.Helper.EnVideoItem;
 import com.dungdv.videoapp.Helper.YoutubeConnecter;
+import com.dungdv.videoapp.Interface.iYoutubeQuery;
 import com.dungdv.videoapp.R;
 import com.dungdv.videoapp.Utilities.GlobalParams;
 import com.github.pedrovgs.DraggableListener;
@@ -36,21 +37,18 @@ public class AcVideoList extends YouTubeBaseActivity implements
     private ListView listView;
     private DraggableView draggableView;
     private VideoListAdapter adapter;
-    private boolean isFirstTimeClick;
     private LinearLayout ll;
     private YouTubePlayerView videoView;
     private YouTubePlayer youtubePlayer;
     private TextView tvTitle, tvProvider, tvAuthor;
-    private LinearLayout frmListVideoContainer;
     private SwipeRefreshLayout swipeLayout;
     boolean isShowingFullscreen;
     String VIDEO_ID = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ac_video_list);
-
-        isFirstTimeClick = true;
 
         initView();
         populateData();
@@ -58,7 +56,6 @@ public class AcVideoList extends YouTubeBaseActivity implements
 
     int currentState;
     private void initView(){
-        frmListVideoContainer = (LinearLayout) findViewById(R.id.frmListVideoContainer);
         swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
         listView = (ListView) findViewById(R.id.list_view);
         ll = (LinearLayout) findViewById(R.id.ll);
@@ -88,7 +85,6 @@ public class AcVideoList extends YouTubeBaseActivity implements
             public void onMinimized() {
                 draggableView.setAlpha(1.0f);
                 draggableView.bringToFront();
-                draggableView.setClickToMaximizeEnabled(true);
                 isShowingFullscreen = false;
                 if(youtubePlayer.isPlaying()){
                     youtubePlayer.pause();
@@ -114,10 +110,6 @@ public class AcVideoList extends YouTubeBaseActivity implements
                 youtubePlayer.loadVideo(VIDEO_ID);
                 draggableView.setVisibility(View.VISIBLE);
                 draggableView.maximize();
-                if(isFirstTimeClick){
-                    isFirstTimeClick = false;
-                }else {
-                }
 
                 tvTitle.setText(videoData.getTitle());
                 tvAuthor.setText(videoData.getDescription());
@@ -130,6 +122,7 @@ public class AcVideoList extends YouTubeBaseActivity implements
                 android.R.color.holo_blue_light,
                 android.R.color.holo_green_light,
                 android.R.color.holo_green_light});
+
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -137,7 +130,6 @@ public class AcVideoList extends YouTubeBaseActivity implements
                 (new Handler()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        swipeLayout.setRefreshing(false);
                         populateData();
                     }
                 }, 1000);
@@ -201,14 +193,19 @@ public class AcVideoList extends YouTubeBaseActivity implements
     }
 
     private void populateData(){
+        new YoutubeConnecter(this).searchVideoByChannel(GlobalParams.THEHEGEO_CHANNEL_ID, new iYoutubeQuery() {
+            @Override
+            public void onSuccess(List<EnVideoItem> videoList) {
+                if(swipeLayout.isRefreshing())
+                    swipeLayout.setRefreshing(false);
+                if(videoList.size() > 0) {
+                    adapter = new VideoListAdapter(videoList, AcVideoList.this);
+                    listView.setAdapter(adapter);
+                }
+            }
+        });
 
-        YoutubeConnecter yc = new YoutubeConnecter(this);
-        List<EnVideoItem> videoList = yc.search(GlobalParams.THEHEGEO_CHANNEL_ID);
 
-        if(videoList.size() > 0) {
-            adapter = new VideoListAdapter(videoList, this);
-            listView.setAdapter(adapter);
-        }
     }
 
     @Override

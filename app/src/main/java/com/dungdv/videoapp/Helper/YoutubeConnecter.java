@@ -1,8 +1,10 @@
 package com.dungdv.videoapp.Helper;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.StrictMode;
 
+import com.dungdv.videoapp.Interface.iYoutubeQuery;
 import com.dungdv.videoapp.R;
 import com.dungdv.videoapp.Utilities.GlobalParams;
 import com.dungdv.videoapp.Utilities.Logger;
@@ -26,7 +28,6 @@ public class YoutubeConnecter {
     private YouTube youtube;
     private YouTube.Search.List query;
 
-
     public YoutubeConnecter(Context context) {
         youtube = new YouTube.Builder(new NetHttpTransport(),
                 new JacksonFactory(), new HttpRequestInitializer() {
@@ -38,7 +39,7 @@ public class YoutubeConnecter {
         }).setApplicationName(context.getResources().getString(R.string.app_name)).build();
 
         try{
-            query = youtube.search().list("id,snippet");
+            query = youtube.search().list("snippet");
             query.setKey(GlobalParams.YOUTUBE_BROWNSER_KEY);
             query.setType("video");
             query.setFields("items(id/videoId,snippet/title,snippet/description,snippet/thumbnails/default/url)");
@@ -47,31 +48,64 @@ public class YoutubeConnecter {
         }
     }
 
-    public List<EnVideoItem> search(String CHANNEL_ID){
+    public void searchVideoByChannel(String CHANNEL_ID, iYoutubeQuery delegate){
 //        query.setQ(keywords);
-        List<EnVideoItem> items = new ArrayList<>();;
-        query.setChannelId(CHANNEL_ID);
-        try{
+        new GetYoutubeVideo(CHANNEL_ID, delegate).execute();
+    }
+
+    private class GetYoutubeVideo extends AsyncTask<Void, Void, List<EnVideoItem>>{
+        List<EnVideoItem> items;
+        String CHANNEL_ID;
+        iYoutubeQuery delegate;
+
+        public GetYoutubeVideo(String CHANNEL_ID, iYoutubeQuery delegate){
+            this.CHANNEL_ID = CHANNEL_ID;
+            this.delegate = delegate;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            items = new ArrayList<>();
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
-            SearchListResponse response = query.execute();
-            List<SearchResult> results = response.getItems();
-
-            for(SearchResult result:results){
-                EnVideoItem item = new EnVideoItem();
-                item.setTitle(result.getSnippet().getTitle());
-                item.setDescription(result.getSnippet().getDescription());
-                item.setThumbnailURL(result.getSnippet().getThumbnails().getHigh().getUrl());
-                item.setId(result.getId().getVideoId());
-                item.setKind(result.getKind());
-                items.add(item);
-
-                Logger.error("found video: " + item.toString());
-            }
-        }catch(Exception e){
-            Logger.error("Could not search: "+e);
         }
-        return items;
 
+        @Override
+        protected List<EnVideoItem> doInBackground(Void... params) {
+            query.setChannelId(CHANNEL_ID);
+            try{
+
+                SearchListResponse response = query.execute();
+                List<SearchResult> results = response.getItems();
+
+                for(SearchResult result:results){
+                    EnVideoItem item = new EnVideoItem();
+                    item.setTitle(result.getSnippet().getTitle());
+                    item.setDescription(result.getSnippet().getDescription());
+                    item.setThumbnailURL(changeImageSizeToHQ(result.getSnippet().getThumbnails().getDefault().getUrl()));
+                    item.setId(result.getId().getVideoId());
+                    item.setKind(result.getKind());
+                    item.setPublistAt(result.getSnippet().getPublishedAt());
+                    item.setChannelTitle(result.getSnippet().getChannelTitle());
+                    item.setSnippet(result.getSnippet().toPrettyString());
+                    items.add(item);
+
+                    Logger.error("found video: " + item.toString());
+                }
+            }catch(Exception e){
+                e.printStackTrace();
+                Logger.error("Search youtube video error: "+ e.getMessage());
+            }
+            return items;
+        }
+
+        @Override
+        protected void onPostExecute(List<EnVideoItem> enVideoItems) {
+            delegate.onSuccess(enVideoItems);
+        }
+    }
+
+    private String changeImageSizeToHQ(String url){
+        return url.replace("default","hqdefault");
     }
 }
