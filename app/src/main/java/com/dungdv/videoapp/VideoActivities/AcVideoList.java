@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Handler;
@@ -27,16 +28,20 @@ import android.widget.VideoView;
 import com.dungdv.videoapp.Adapters.VideoListAdapter;
 import com.dungdv.videoapp.Entities.EnVideoData;
 import com.dungdv.videoapp.Entities.EnYoutubeInformationData;
+import com.dungdv.videoapp.Helper.YoutubeConnecter;
 import com.dungdv.videoapp.Helper.YoutubeHelper;
 import com.dungdv.videoapp.R;
 import com.dungdv.videoapp.Utilities.GlobalParams;
 import com.dungdv.videoapp.Utilities.Logger;
+import com.github.florent37.viewanimator.AnimationListener;
+import com.github.florent37.viewanimator.ViewAnimator;
 import com.github.pedrovgs.DraggableListener;
 import com.github.pedrovgs.DraggableView;
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
+import com.meetic.marypopup.MaryPopup;
 
 import org.w3c.dom.Text;
 
@@ -68,6 +73,9 @@ public class AcVideoList extends YouTubeBaseActivity implements
 
         initView();
         populateData();
+
+        YoutubeConnecter yc = new YoutubeConnecter(this);
+        yc.search("THEHEGEO");
     }
 
     int currentState;
@@ -93,9 +101,8 @@ public class AcVideoList extends YouTubeBaseActivity implements
             public void onMaximized() {
                 draggableView.bringToFront();
                 isShowingFullscreen = false;
-                if(youtubePlayer != null){
-                        youtubePlayer.loadVideo(VIDEO_ID);
-
+                if(!youtubePlayer.isPlaying()){
+                    youtubePlayer.play();
                 }
             }
 
@@ -105,8 +112,7 @@ public class AcVideoList extends YouTubeBaseActivity implements
                 draggableView.bringToFront();
                 draggableView.setClickToMaximizeEnabled(true);
                 isShowingFullscreen = false;
-                if(youtubePlayer != null){
-                    Logger.error("pause video in state: " + currentState);
+                if(youtubePlayer.isPlaying()){
                     youtubePlayer.pause();
                 }
             }
@@ -127,9 +133,12 @@ public class AcVideoList extends YouTubeBaseActivity implements
 
                 EnVideoData videoData = (EnVideoData) parent.getAdapter().getItem(position);
                 VIDEO_ID = videoData.getVideoUrl();
+                youtubePlayer.loadVideo(VIDEO_ID);
                 draggableView.setVisibility(View.VISIBLE);
+                draggableView.maximize();
                 if(isFirstTimeClick){
                     isFirstTimeClick = false;
+                }else {
                 }
 
                 tvTitle.setText("");
@@ -137,7 +146,6 @@ public class AcVideoList extends YouTubeBaseActivity implements
                 tvProvider.setText("");
                 YoutubeHelper.getTitleQuietly(AcVideoList.this, VIDEO_ID, tvTitle, tvAuthor, tvProvider);
 
-                draggableView.maximize();
             }
         });
 
@@ -182,7 +190,6 @@ public class AcVideoList extends YouTubeBaseActivity implements
             youtubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
             youtubePlayer.setShowFullscreenButton(true);
             youtubePlayer.setFullscreen(false);
-//            youtubePlayer.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_SYSTEM_UI);
 
             youtubePlayer.setOnFullscreenListener(new YouTubePlayer.OnFullscreenListener() {
                 @Override

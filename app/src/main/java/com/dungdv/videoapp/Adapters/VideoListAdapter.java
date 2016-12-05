@@ -75,6 +75,7 @@ public class VideoListAdapter extends BaseAdapter {
         holder.videoName.setText(getItem(position).getVideoName());
         final ProgressBar dialog = holder.prLoadImgThumb;
         final ImageView youtube = holder.iconYoutube;
+        final ImageView thumb = holder.thumb;
         holder.thumb.initialize(GlobalParams.YOUTUBE_API_KEY, new YouTubeThumbnailView.OnInitializedListener() {
             @Override
             public void onInitializationSuccess(YouTubeThumbnailView youTubeThumbnailView, final YouTubeThumbnailLoader youTubeThumbnailLoader) {

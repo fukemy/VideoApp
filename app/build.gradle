@@ -34,4 +34,7 @@ dependencies {
     compile 'com.github.florent37:viewanimator:1.0.4'
     compile 'com.google.android.exoplayer:exoplayer:r2.0.4'
     compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
+    compile 'com.meetic.marypopup:marypopup:1.0.0'
+    compile 'com.meetic.dragueur:dragueur:1.0.3'
+    compile 'com.google.apis:google-api-services-youtube:v3-rev176-1.22.0'
 }
