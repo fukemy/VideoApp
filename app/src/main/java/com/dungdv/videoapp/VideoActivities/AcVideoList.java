@@ -28,6 +28,7 @@ import android.widget.VideoView;
 import com.dungdv.videoapp.Adapters.VideoListAdapter;
 import com.dungdv.videoapp.Entities.EnVideoData;
 import com.dungdv.videoapp.Entities.EnYoutubeInformationData;
+import com.dungdv.videoapp.Helper.EnVideoItem;
 import com.dungdv.videoapp.Helper.YoutubeConnecter;
 import com.dungdv.videoapp.Helper.YoutubeHelper;
 import com.dungdv.videoapp.R;
@@ -73,9 +74,6 @@ public class AcVideoList extends YouTubeBaseActivity implements
 
         initView();
         populateData();
-
-        YoutubeConnecter yc = new YoutubeConnecter(this);
-        yc.search("THEHEGEO");
     }
 
     int currentState;
@@ -131,8 +129,8 @@ public class AcVideoList extends YouTubeBaseActivity implements
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                EnVideoData videoData = (EnVideoData) parent.getAdapter().getItem(position);
-                VIDEO_ID = videoData.getVideoUrl();
+                EnVideoItem videoData = (EnVideoItem) parent.getAdapter().getItem(position);
+                VIDEO_ID = videoData.getId();
                 youtubePlayer.loadVideo(VIDEO_ID);
                 draggableView.setVisibility(View.VISIBLE);
                 draggableView.maximize();
@@ -141,10 +139,9 @@ public class AcVideoList extends YouTubeBaseActivity implements
                 }else {
                 }
 
-                tvTitle.setText("");
-                tvAuthor.setText("");
-                tvProvider.setText("");
-                YoutubeHelper.getTitleQuietly(AcVideoList.this, VIDEO_ID, tvTitle, tvAuthor, tvProvider);
+                tvTitle.setText(videoData.getTitle());
+                tvAuthor.setText(videoData.getDescription());
+                tvProvider.setText("THEHEGEO");
 
             }
         });
@@ -226,24 +223,14 @@ public class AcVideoList extends YouTubeBaseActivity implements
 
     EnVideoData videoData;
     private void populateData(){
-        videoList = new ArrayList<>();
 
-        videoData = new EnVideoData();
-        videoData.setVideoDescription("Chưa cập nhập địa chỉ");
-        videoData.setVideoName("Đường Nguyễn Văn Cừ");
-        videoData.setVideoUrl("RskPgmc2ngg");
-        videoData.setVideoThumb(GlobalParams.THUMBS_VIDEO_SAMPLE);
-        videoList.add(videoData);
+        YoutubeConnecter yc = new YoutubeConnecter(this);
+        List<EnVideoItem> videoList = yc.search(GlobalParams.THEHEGEO_CHANNEL_ID);
 
-        videoData = new EnVideoData();
-        videoData.setVideoDescription("Chưa cập nhập địa chỉ");
-        videoData.setVideoName("Đường Võ Thị Sáu");
-        videoData.setVideoUrl("8EkJnJyVPtA");
-        videoData.setVideoThumb(GlobalParams.THUMBS_VIDEO_SAMPLE);
-
-        videoList.add(videoData);
-        adapter = new VideoListAdapter(videoList, this);
-        listView.setAdapter(adapter);
+        if(videoList.size() > 0) {
+            adapter = new VideoListAdapter(videoList, this);
+            listView.setAdapter(adapter);
+        }
     }
 
     @Override

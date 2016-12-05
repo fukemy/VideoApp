@@ -12,4 +12,6 @@ public class GlobalParams {
     public static final String YOUTUBE_AUTHOR = "author_name";
     public static final String YOUTUBE_PROVIDER = "provider_name";
     public static final String YOUTUBE_TITLE = "title";
+    public static final String THEHEGEO_CHANNEL_ID = "UCWvYziaaakg7jCWgtSprTSw";
+    public static final String YOUTUBE_BROWNSER_KEY = "AIzaSyCUHFVmM7A3xA0Z2yWrojDEr71m6NGb0Y8";
 }

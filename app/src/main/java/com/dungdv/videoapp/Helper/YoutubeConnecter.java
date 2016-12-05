@@ -26,34 +26,37 @@ public class YoutubeConnecter {
     private YouTube youtube;
     private YouTube.Search.List query;
 
+
     public YoutubeConnecter(Context context) {
         youtube = new YouTube.Builder(new NetHttpTransport(),
                 new JacksonFactory(), new HttpRequestInitializer() {
             @Override
             public void initialize(HttpRequest hr) throws IOException {
+                Logger.error("initialize success");
                 hr.setConnectTimeout(15000);
             }
         }).setApplicationName(context.getResources().getString(R.string.app_name)).build();
 
         try{
             query = youtube.search().list("id,snippet");
-            query.setKey(GlobalParams.YOUTUBE_API_KEY);
-            query.setType("channel");
+            query.setKey(GlobalParams.YOUTUBE_BROWNSER_KEY);
+            query.setType("video");
             query.setFields("items(id/videoId,snippet/title,snippet/description,snippet/thumbnails/default/url)");
         }catch(IOException e){
             Logger.error("Could not initialize: "+e);
         }
     }
 
-    public List<EnVideoItem> search(String keywords){
-        query.setQ(keywords);
+    public List<EnVideoItem> search(String CHANNEL_ID){
+//        query.setQ(keywords);
+        List<EnVideoItem> items = new ArrayList<>();;
+        query.setChannelId(CHANNEL_ID);
         try{
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
             SearchListResponse response = query.execute();
             List<SearchResult> results = response.getItems();
 
-            List<EnVideoItem> items = new ArrayList<>();
             for(SearchResult result:results){
                 EnVideoItem item = new EnVideoItem();
                 item.setTitle(result.getSnippet().getTitle());
@@ -64,10 +67,10 @@ public class YoutubeConnecter {
 
                 Logger.error("found video: " + item.toString());
             }
-            return items;
         }catch(Exception e){
             Logger.error("Could not search: "+e);
-            return null;
         }
+        return items;
+
     }
 }

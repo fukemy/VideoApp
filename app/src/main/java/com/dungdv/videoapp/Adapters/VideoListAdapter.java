@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dungdv.videoapp.Entities.EnVideoData;
+import com.dungdv.videoapp.Helper.EnVideoItem;
 import com.dungdv.videoapp.Helper.YoutubeHelper;
 import com.dungdv.videoapp.R;
 import com.dungdv.videoapp.Utilities.GlobalParams;
@@ -28,10 +29,10 @@ import java.util.List;
 
 public class VideoListAdapter extends BaseAdapter {
 
-    List<EnVideoData> videoList;
+    List<EnVideoItem> videoList;
     private Context mContext;
 
-    public VideoListAdapter(List<EnVideoData> videoList, Context mContext){
+    public VideoListAdapter(List<EnVideoItem> videoList, Context mContext){
         this.videoList = videoList;
         this.mContext = mContext;
     }
@@ -59,57 +60,69 @@ public class VideoListAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
         LayoutInflater inflater = LayoutInflater.from(mContext);
-        // If holder not exist then locate all view from UI file.
         if (convertView == null) {
-            // inflate UI from XML file
             convertView = inflater.inflate(R.layout.video_thumb_listview, parent, false);
-            // get all UI view
             holder = new ViewHolder(convertView);
-            // set tag for holder
             convertView.setTag(holder);
         } else {
-            // if holder created, get tag from view
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.videoName.setText(getItem(position).getVideoName());
+        holder.videoName.setText(getItem(position).getTitle());
         final ProgressBar dialog = holder.prLoadImgThumb;
         final ImageView youtube = holder.iconYoutube;
-        final ImageView thumb = holder.thumb;
-        holder.thumb.initialize(GlobalParams.YOUTUBE_API_KEY, new YouTubeThumbnailView.OnInitializedListener() {
-            @Override
-            public void onInitializationSuccess(YouTubeThumbnailView youTubeThumbnailView, final YouTubeThumbnailLoader youTubeThumbnailLoader) {
-                youTubeThumbnailLoader.setVideo(getItem(position).getVideoUrl());
-                youTubeThumbnailLoader.setOnThumbnailLoadedListener(new YouTubeThumbnailLoader.OnThumbnailLoadedListener() {
+        Picasso.with(mContext).load(getItem(position).getThumbnailURL())
+                .into(holder.thumb, new Callback() {
                     @Override
-                    public void onThumbnailLoaded(YouTubeThumbnailView youTubeThumbnailView, String s) {
-                        try {
-                            youTubeThumbnailLoader.release();
-                        }catch (Exception e){}
+                    public void onSuccess() {
                         dialog.setVisibility(View.GONE);
                         youtube.setVisibility(View.VISIBLE);
                     }
 
                     @Override
-                    public void onThumbnailError(YouTubeThumbnailView youTubeThumbnailView, YouTubeThumbnailLoader.ErrorReason errorReason) {
+                    public void onError() {
                         dialog.setVisibility(View.GONE);
                         youtube.setVisibility(View.VISIBLE);
                     }
                 });
-            }
 
-            @Override
-            public void onInitializationFailure(YouTubeThumbnailView youTubeThumbnailView, YouTubeInitializationResult youTubeInitializationResult) {
-                dialog.setVisibility(View.GONE);
-                youtube.setVisibility(View.VISIBLE);
-            }
-        });
+//        final ProgressBar dialog = holder.prLoadImgThumb;
+//        final ImageView youtube = holder.iconYoutube;
+//        final ImageView thumb = holder.thumb;
+//        holder.thumb.initialize(GlobalParams.YOUTUBE_API_KEY, new YouTubeThumbnailView.OnInitializedListener() {
+//            @Override
+//            public void onInitializationSuccess(YouTubeThumbnailView youTubeThumbnailView, final YouTubeThumbnailLoader youTubeThumbnailLoader) {
+//                youTubeThumbnailLoader.setVideo(getItem(position).getId());
+//                youTubeThumbnailLoader.setOnThumbnailLoadedListener(new YouTubeThumbnailLoader.OnThumbnailLoadedListener() {
+//                    @Override
+//                    public void onThumbnailLoaded(YouTubeThumbnailView youTubeThumbnailView, String s) {
+//                        try {
+//                            youTubeThumbnailLoader.release();
+//                        }catch (Exception e){}
+//                        dialog.setVisibility(View.GONE);
+//                        youtube.setVisibility(View.VISIBLE);
+//                    }
+//
+//                    @Override
+//                    public void onThumbnailError(YouTubeThumbnailView youTubeThumbnailView, YouTubeThumbnailLoader.ErrorReason errorReason) {
+//                        dialog.setVisibility(View.GONE);
+//                        youtube.setVisibility(View.VISIBLE);
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onInitializationFailure(YouTubeThumbnailView youTubeThumbnailView, YouTubeInitializationResult youTubeInitializationResult) {
+//                dialog.setVisibility(View.GONE);
+//                youtube.setVisibility(View.VISIBLE);
+//            }
+//        });
 //        YoutubeHelper.getTitleQuietly(getItem(position).getVideoUrl());
         return convertView;
     }
 
     @Override
-    public EnVideoData getItem(int position) {
+    public EnVideoItem getItem(int position) {
         return videoList.get(position);
     }
 
