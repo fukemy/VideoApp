@@ -11,7 +11,6 @@ import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,7 +36,6 @@ public class AcVideoList extends YouTubeBaseActivity implements
     private ListView listView;
     private DraggableView draggableView;
     private VideoListAdapter adapter;
-    private LinearLayout ll;
     private YouTubePlayerView videoView;
     private YouTubePlayer youtubePlayer;
     private TextView tvTitle, tvProvider, tvAuthor;
@@ -54,11 +52,9 @@ public class AcVideoList extends YouTubeBaseActivity implements
         populateData();
     }
 
-    int currentState;
     private void initView(){
         swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
         listView = (ListView) findViewById(R.id.list_view);
-        ll = (LinearLayout) findViewById(R.id.ll);
         tvTitle = (TextView) findViewById(R.id.tvTitle);
         tvProvider = (TextView) findViewById(R.id.tvProvider);
         tvAuthor = (TextView) findViewById(R.id.tvAuthor);
@@ -147,7 +143,6 @@ public class AcVideoList extends YouTubeBaseActivity implements
                     errorReason.toString());
             Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
         }
-
     }
 
     @Override
@@ -167,7 +162,6 @@ public class AcVideoList extends YouTubeBaseActivity implements
                 }
             });
         }
-
     }
 
     @Override
@@ -204,21 +198,24 @@ public class AcVideoList extends YouTubeBaseActivity implements
                 }
             }
         });
-
-
     }
 
     @Override
     public void onBackPressed() {
-        if (draggableView.isMaximized()) {
-            if (isShowingFullscreen == true){
-                isShowingFullscreen = false;
-                youtubePlayer.setFullscreen(false);
-            }else {
-                draggableView.minimize();
-            }
-        } else {
+        if(VIDEO_ID != ""){
+            //first show home screen
             super.onBackPressed();
+        }else {
+            if (draggableView.isMaximized()) {
+                if (isShowingFullscreen == true) {
+                    isShowingFullscreen = false;
+                    youtubePlayer.setFullscreen(false);
+                } else {
+                    draggableView.minimize();
+                }
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 
